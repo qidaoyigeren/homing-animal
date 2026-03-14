@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: homing-animal
+ezviz:
+  app-key: c8f4ad8220c24443bc60327cbcc06c24  # 萤石开放平台获取
+  app-secret: 62d73a2f5a6f6f63593d373dc2a55796
+  api-url: https://open.ys7.com/api/lapp/token/get
