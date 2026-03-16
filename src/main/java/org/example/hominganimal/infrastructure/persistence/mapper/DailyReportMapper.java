@@ -1,4 +1,4 @@
 package org.example.hominganimal.infrastructure.persistence.mapper;
 
-public class DailyReportMapper {
+public interface DailyReportMapper {
 }

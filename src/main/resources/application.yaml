@@ -51,3 +51,6 @@ pet-monitor:
 logging:
   level:
     com.petcare: debug
+jwt:
+  secret: "PetCareIoTSuperSecretKey2026PetCare!!!"
+  expiration-ms: 86400000

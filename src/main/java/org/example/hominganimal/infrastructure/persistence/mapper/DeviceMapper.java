@@ -1,4 +1,8 @@
 package org.example.hominganimal.infrastructure.persistence.mapper;
 
-public class DeviceMapper {
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
+import org.example.hominganimal.infrastructure.persistence.dataobject.DeviceDO;
+@Mapper
+public interface DeviceMapper extends BaseMapper<DeviceDO> {
 }
