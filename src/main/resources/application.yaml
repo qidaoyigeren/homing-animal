@@ -1,7 +1,19 @@
+server:
+  port: 8080
 spring:
-  application:
-    name: homing-animal
+  datasource:
+    url: jdbc:mysql://localhost:3306/pet_iot_db?useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: hh8527HH
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: yourpassword
+      database: 0
 ezviz:
   app-key: c8f4ad8220c24443bc60327cbcc06c24  # 萤石开放平台获取
   app-secret: 62d73a2f5a6f6f63593d373dc2a55796
   api-url: https://open.ys7.com/api/lapp/token/get
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
