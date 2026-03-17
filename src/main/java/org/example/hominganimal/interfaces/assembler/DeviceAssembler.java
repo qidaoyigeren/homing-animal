@@ -4,8 +4,6 @@ import org.example.hominganimal.domain.device.entity.Device;
 import org.example.hominganimal.domain.device.valueobject.DeviceStatus;
 import org.example.hominganimal.interfaces.dto.response.DeviceVO;
 
-import java.time.LocalDateTime;
-
 public class DeviceAssembler {
     public static DeviceVO toVO(Device device){
         DeviceVO vo=new DeviceVO();

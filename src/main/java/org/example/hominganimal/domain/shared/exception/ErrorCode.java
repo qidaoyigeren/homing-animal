@@ -12,7 +12,6 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "未授权"),
     NOT_FOUND(404, "资源不存在"),
     INTERNAL_ERROR(500, "系统内部错误"),
-
     // 设备相关 1xxx
     DEVICE_NOT_FOUND(1001, "设备不存在"),
     DEVICE_ALREADY_BOUND(1002, "设备已绑定"),
@@ -26,8 +25,9 @@ public enum ErrorCode {
     // 萤石相关 3xxx
     EZVIZ_API_ERROR(3001, "萤石API调用失败"),
     EZVIZ_TOKEN_ERROR(3002, "萤石Token获取失败"),
-    EZVIZ_CAPTURE_ERROR(3003, "设备抓拍失败");
-
+    EZVIZ_CAPTURE_ERROR(3003, "设备抓拍失败"),
+    //认证相关 4xxx
+    USER_ALREADY_EXIST(4001,"用户已存在");
     private final int code;
     private final String message;
 }
