@@ -1,8 +1,10 @@
 package org.example.hominganimal.infrastructure.ezviz;
 
+import com.alibaba.fastjson2.JSONArray;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.alibaba.fastjson2.JSONObject;
+import org.example.hominganimal.infrastructure.ezviz.dto.EzvizDeviceResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -11,6 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 萤石开放平台API客户端
@@ -32,6 +37,46 @@ public class EzvizApiClient {
         params.add("validateCode", validateCode);
         JSONObject result = doPost("/api/lapp/device/add", params);
         log.info("添加设备成功: serial={}", deviceSerial);
+    }
+    public void deleteDevice(String deviceSerial) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("accessToken", tokenManager.getAccessToken());
+        params.add("deviceSerial", deviceSerial);
+        JSONObject result = doPost("/api/lapp/device/delete", params);
+        log.info("删除设备成功: serial={}", deviceSerial);
+    }
+    public List<EzvizDeviceResponse> getDeviceList(int pageStart,int pageSize) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("accessToken", tokenManager.getAccessToken());
+        params.add("pageStart", String.valueOf(pageStart));
+        params.add("pageSize", String.valueOf(pageSize));
+        JSONObject result = doPost("/api/lapp/device/list", params);
+        JSONArray deviceArray = result.getJSONArray("data");
+        List<EzvizDeviceResponse> devices = new ArrayList<>();
+        if(deviceArray!=null){
+            for(int i=0;i<deviceArray.size();i++){
+                JSONObject item = deviceArray.getJSONObject(i);
+                EzvizDeviceResponse device = new EzvizDeviceResponse();
+                device.setDeviceSerial(item.getString("deviceSerial"));
+                device.setDeviceName(item.getString("deviceName"));
+                device.setStatus(item.getIntValue("status"));
+                devices.add(device);
+            }
+        }
+        return devices;
+    }
+    public int getDeviceStatus(String deviceSerial) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("accessToken", tokenManager.getAccessToken());
+        params.add("deviceSerial", deviceSerial);
+
+        JSONObject result = doPost("/api/lapp/device/status/get", params);
+        // 萤石返回的 status: 1-在线, 2-离线
+        JSONArray dataArray = result.getJSONArray("data");
+        if (dataArray != null && !dataArray.isEmpty()) {
+            return dataArray.getJSONObject(0).getIntValue("status");
+        }
+        return 0;
     }
     private JSONObject doPost(String path, MultiValueMap<String, String> params) {
         String url= properties.getApiBaseUrl()+path;
