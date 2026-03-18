@@ -27,7 +27,9 @@ public enum ErrorCode {
     EZVIZ_TOKEN_ERROR(3002, "萤石Token获取失败"),
     EZVIZ_CAPTURE_ERROR(3003, "设备抓拍失败"),
     //认证相关 4xxx
-    USER_ALREADY_EXIST(4001,"用户已存在");
+    USER_ALREADY_EXIST(4001,"用户已存在"),
+    USER_NOT_FOUND(4002,"用户不存在" ),
+    USER_PASSWORD_ERROR(4003,"密码错误" );
     private final int code;
     private final String message;
 }

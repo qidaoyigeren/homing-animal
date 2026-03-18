@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class DeviceRepositoryImpl implements DeviceRepository {
-    private DeviceMapper deviceMapper;
+    private final DeviceMapper deviceMapper;
     @Override
     public List<Device> findByUserId(Long userId){
         LambdaQueryWrapper<DeviceDO> queryWrapper = new LambdaQueryWrapper<>();
