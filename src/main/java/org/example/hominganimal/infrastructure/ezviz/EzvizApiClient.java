@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.alibaba.fastjson2.JSONObject;
 import org.example.hominganimal.infrastructure.ezviz.dto.EzvizDeviceResponse;
+import org.example.hominganimal.infrastructure.utils.TimeUtil;
+import org.example.hominganimal.interfaces.dto.response.VideoListVO;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,6 +16,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +80,59 @@ public class EzvizApiClient {
             return dataArray.getJSONObject(0).getIntValue("status");
         }
         return 0;
+    }
+    // ===================== 视频能力 =====================
+
+    public String getUrlBySerial(String deviceSerial) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("accessToken", tokenManager.getAccessToken());
+        params.add("deviceSerial", deviceSerial);
+        params.add("channelNo", "1");
+        params.add("protocol", "2"); // 2=HLS
+        params.add("quality", "1");  // 1=高清
+        JSONObject result = doPost("/api/lapp/v2/live/address/get", params);
+        JSONObject data = result.getJSONObject("data");
+        if(data!=null){
+            return data.getString("url");
+        }
+        return null;
+    }
+    public String getBackUrlBySerial(String deviceSerial, String startTime, String endTime) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("accessToken", tokenManager.getAccessToken());
+        params.add("deviceSerial", deviceSerial);
+        params.add("channelNo", "1");
+        params.add("protocol", "2"); // 2=HLS
+        params.add("startTime", startTime);
+        params.add("endTime", endTime);
+        JSONObject result = doPost("/api/lapp/v2/cloud/record/url/get", params);
+        JSONObject data = result.getJSONObject("data");
+        if(data!=null)
+            return data.getString("url");
+        return null;
+    }
+    public List<VideoListVO> getVideoListByTime(LocalDateTime startTime, LocalDateTime endTime, String deviceSerial) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("accessToken", tokenManager.getAccessToken());
+        params.add("deviceSerial", deviceSerial);
+        params.add("channelNo", "1");
+        params.add("protocol", "2"); // 2=HLS
+        params.add("startTime", TimeUtil.format(startTime));
+        params.add("endTime", TimeUtil.format(endTime));
+        JSONObject result = doPost("/api/lapp/v2/cloud/record/list", params);
+        JSONArray dataArray = result.getJSONArray("data");
+        List<VideoListVO> list = new ArrayList<>();
+        if(dataArray!=null){
+            for(int i=0;i<dataArray.size();i++){
+                JSONObject item = dataArray.getJSONObject(i);
+                VideoListVO vo = new VideoListVO();
+                vo.setBeginTime(TimeUtil.parseSafe(item.getString("startTime")));
+                vo.setEndTime(TimeUtil.parseSafe(item.getString("endTime")));
+                vo.setFileSize(item.getLongValue("fileSize"));
+                list.add(vo);
+            }
+        }
+        return list;
     }
     private JSONObject doPost(String path, MultiValueMap<String, String> params) {
         String url= properties.getApiBaseUrl()+path;

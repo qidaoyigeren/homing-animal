@@ -9,8 +9,10 @@ import org.example.hominganimal.domain.shared.exception.BusinessException;
 import org.example.hominganimal.domain.shared.exception.ErrorCode;
 import org.example.hominganimal.infrastructure.ezviz.EzvizApiClient;
 import org.example.hominganimal.infrastructure.persistence.repository.DeviceRepositoryImpl;
+import org.example.hominganimal.interfaces.dto.response.VideoListVO;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -57,5 +59,17 @@ public class DeviceAppService {
                 .orElseThrow(()->new BusinessException(ErrorCode.DEVICE_NOT_FOUND));
         device.convertPetDetect(open);
         deviceRepository.update(device);
+    }
+
+    public String getUrlBySerial(String deviceSerial) {
+        return ezvizApiClient.getUrlBySerial(deviceSerial);
+    }
+
+    public String getBackUrlBySerial(String deviceSerial, String startTime, String endTime) {
+        return ezvizApiClient.getBackUrlBySerial(deviceSerial,startTime,endTime);
+    }
+
+    public List<VideoListVO> getVideoListByTime(LocalDateTime startTime, LocalDateTime endTime, String deviceSerial) {
+        return ezvizApiClient.getVideoListByTime(startTime,endTime,deviceSerial);
     }
 }
