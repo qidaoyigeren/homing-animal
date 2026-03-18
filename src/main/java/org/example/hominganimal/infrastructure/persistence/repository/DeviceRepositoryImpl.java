@@ -41,5 +41,23 @@ public class DeviceRepositoryImpl implements DeviceRepository {
         return device;
     }
 
+    @Override
+    public Optional<Device> findByDeviceId(Long deviceId) {
+        LambdaQueryWrapper<DeviceDO> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(DeviceDO::getId, deviceId);
+        DeviceDO deviceDO = deviceMapper.selectOne(queryWrapper);
+        return Optional.ofNullable(DeviceConverter.toEntity(deviceDO));
+    }
+
+    @Override
+    public void deleteByDeviceId(Long deviceId) {
+        deviceMapper.deleteById(deviceId);
+    }
+
+    @Override
+    public void update(Device device) {
+        deviceMapper.updateById(DeviceConverter.toDO(device));
+    }
+
 
 }

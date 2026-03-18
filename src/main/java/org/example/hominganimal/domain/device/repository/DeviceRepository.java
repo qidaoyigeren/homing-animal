@@ -14,4 +14,10 @@ public interface DeviceRepository {
     Optional<Device> findBySerial(@NotBlank(message = "设备序列号不能为空") String deviceSerial);
 
     Device save(Device device);
+
+    Optional<Device> findByDeviceId(Long deviceId);
+
+    void deleteByDeviceId(Long deviceId);
+
+    void update(Device device);
 }

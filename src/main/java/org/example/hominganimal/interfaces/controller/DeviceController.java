@@ -10,10 +10,9 @@ import org.example.hominganimal.interfaces.assembler.DeviceAssembler;
 import org.example.hominganimal.interfaces.dto.request.DeviceBindRequest;
 import org.example.hominganimal.interfaces.dto.response.ApiResponse;
 import org.example.hominganimal.interfaces.dto.response.DeviceVO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/device")
@@ -29,4 +28,22 @@ public class DeviceController {
                         deviceBindRequest.getDeviceName());
         return ApiResponse.ok(DeviceAssembler.toVO(device));
     }
+    @DeleteMapping("/{deviceId}")
+    public ApiResponse<Void>unBind(@PathVariable Long deviceId) {
+        deviceService.unBind(SecurityUtil.getCurrentUserId(), deviceId);
+        return ApiResponse.ok();
+    }
+    @GetMapping("/list")
+    public ApiResponse<List<DeviceVO>>list(){
+        Long userId= SecurityUtil.getCurrentUserId();
+        List<Device> devices=deviceService.list(userId);
+        List<DeviceVO>deviceVOS= devices.stream().map(DeviceAssembler::toVO).toList();
+        return ApiResponse.ok(deviceVOS);
+    }
+    @PutMapping("/{deviceId}/pet-detect")
+    public ApiResponse<Void>petDetect(@PathVariable Long deviceId, @RequestParam Boolean open){
+        deviceService.petDetect(SecurityUtil.getCurrentUserId(), deviceId, open);
+        return ApiResponse.ok();
+    }
+
 }

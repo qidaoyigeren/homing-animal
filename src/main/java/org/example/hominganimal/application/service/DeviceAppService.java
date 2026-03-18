@@ -11,6 +11,8 @@ import org.example.hominganimal.infrastructure.ezviz.EzvizApiClient;
 import org.example.hominganimal.infrastructure.persistence.repository.DeviceRepositoryImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -35,5 +37,25 @@ public class DeviceAppService {
         Device device=Device.create(deviceSerial,validateCode, deviceName, currentUserId);
         deviceRepository.save(device);
         return device;
+    }
+
+    public void unBind(Long currentUserId, Long deviceId) {
+        Device device = deviceRepository.findByDeviceId(deviceId)
+                .orElseThrow(()->new BusinessException(ErrorCode.DEVICE_NOT_FOUND));
+        ezvizApiClient.deleteDevice(device.getDeviceSerial());
+        deviceRepository.deleteByDeviceId(deviceId);
+        log.info("设备解绑成功: userId={}, serial={}", currentUserId, device.getDeviceSerial());
+
+    }
+
+    public List<Device> list(Long userId) {
+        return deviceRepository.findByUserId(userId);
+    }
+
+    public void petDetect(Long currentUserId, Long deviceId, Boolean open) {
+        Device device = deviceRepository.findByDeviceId(deviceId)
+                .orElseThrow(()->new BusinessException(ErrorCode.DEVICE_NOT_FOUND));
+        device.convertPetDetect(open);
+        deviceRepository.update(device);
     }
 }
