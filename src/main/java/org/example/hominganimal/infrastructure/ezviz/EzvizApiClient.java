@@ -116,10 +116,9 @@ public class EzvizApiClient {
         params.add("accessToken", tokenManager.getAccessToken());
         params.add("deviceSerial", deviceSerial);
         params.add("channelNo", "1");
-        params.add("protocol", "2"); // 2=HLS
         params.add("startTime", TimeUtil.format(startTime));
         params.add("endTime", TimeUtil.format(endTime));
-        JSONObject result = doPost("/api/lapp/v2/cloud/record/list", params);
+        JSONObject result = doPost("/api/lapp/video/by/time", params);
         JSONArray dataArray = result.getJSONArray("data");
         List<VideoListVO> list = new ArrayList<>();
         if(dataArray!=null){

@@ -32,7 +32,7 @@ public class VideoController {
         String url=deviceAppService.getBackUrlBySerial(deviceSerial,startTime,endTime);
         return ApiResponse.ok(Map.of("url",url));
     }
-    @GetMapping("/by/time")
+    @GetMapping("/list/{deviceSerial}")
     public ApiResponse<List<VideoListVO>> getVideoListByTime(
             @RequestParam
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -40,7 +40,7 @@ public class VideoController {
             @RequestParam
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             LocalDateTime endTime,
-            @RequestParam String deviceSerial
+            @PathVariable String deviceSerial
     ) {
         List<VideoListVO>list= deviceAppService.getVideoListByTime(startTime,endTime,deviceSerial);
         return ApiResponse.ok(list);

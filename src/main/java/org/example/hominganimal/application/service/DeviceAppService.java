@@ -11,6 +11,7 @@ import org.example.hominganimal.infrastructure.ezviz.EzvizApiClient;
 import org.example.hominganimal.infrastructure.persistence.repository.DeviceRepositoryImpl;
 import org.example.hominganimal.interfaces.dto.response.VideoListVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +23,7 @@ public class DeviceAppService {
     private final EzvizApiClient ezvizApiClient;
     private final DeviceRepositoryImpl deviceRepository;
     private final DeviceDomainService domainService = new DeviceDomainService();
+    @Transactional
     public Device bind(
             Long currentUserId,
             @NotBlank(message = "设备序列号不能为空") String deviceSerial,
@@ -40,7 +42,7 @@ public class DeviceAppService {
         deviceRepository.save(device);
         return device;
     }
-
+    @Transactional
     public void unBind(Long currentUserId, Long deviceId) {
         Device device = deviceRepository.findByDeviceId(deviceId)
                 .orElseThrow(()->new BusinessException(ErrorCode.DEVICE_NOT_FOUND));
@@ -49,26 +51,26 @@ public class DeviceAppService {
         log.info("设备解绑成功: userId={}, serial={}", currentUserId, device.getDeviceSerial());
 
     }
-
+    @Transactional
     public List<Device> list(Long userId) {
         return deviceRepository.findByUserId(userId);
     }
-
+    @Transactional
     public void petDetect(Long currentUserId, Long deviceId, Boolean open) {
         Device device = deviceRepository.findByDeviceId(deviceId)
                 .orElseThrow(()->new BusinessException(ErrorCode.DEVICE_NOT_FOUND));
         device.convertPetDetect(open);
         deviceRepository.update(device);
     }
-
+    @Transactional
     public String getUrlBySerial(String deviceSerial) {
         return ezvizApiClient.getUrlBySerial(deviceSerial);
     }
-
+    @Transactional
     public String getBackUrlBySerial(String deviceSerial, String startTime, String endTime) {
         return ezvizApiClient.getBackUrlBySerial(deviceSerial,startTime,endTime);
     }
-
+    @Transactional
     public List<VideoListVO> getVideoListByTime(LocalDateTime startTime, LocalDateTime endTime, String deviceSerial) {
         return ezvizApiClient.getVideoListByTime(startTime,endTime,deviceSerial);
     }
